@@ -2,9 +2,6 @@ function crearCabecera(propiedades) {
     const cabecera = document.createElement("thead");
     let tr = document.createElement("tr");
     propiedades.forEach((p) => {
-        if (p === "id") {
-            return;
-        }
         const th = document.createElement("th");
         th.textContent = p; //agarro el nombre de las propiedades del objeto y se los asigno
         th.id = p;
@@ -24,9 +21,8 @@ function crearCuerpo(data, cabecera) {
             const celda = document.createElement("td");
             if (c === "id") {
                 fila.setAttribute("id", obj[c]);
-                return;
             }
-            else if (c === "Modificar") {
+            if (c === "Modificar") {
                 const b = document.createElement('button');
                 b.innerText = c;
                 b.addEventListener('click', () => {
