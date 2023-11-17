@@ -19,6 +19,9 @@ export class Futbolista extends Persona {
         this.posicion = posicion;
         this.cantidadGoles = cantidadGoles;
     }
+    toJson() {
+        return JSON.stringify(this);
+    }
 }
 
 export class Profesional extends Persona {
@@ -27,6 +30,9 @@ export class Profesional extends Persona {
         this.titulo = titulo;
         this.facultad = facultad;
         this.añoGraduacion = añoGraduacion;
+    }
+    toJson() {
+        return JSON.stringify(this);
     }
 }
 

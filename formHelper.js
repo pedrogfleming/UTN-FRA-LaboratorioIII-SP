@@ -377,21 +377,21 @@ function removerCampos() {
 }
 
 function validarInputs(inputs, objType) {
-    // TODO agregar validaciones
-    // let datosInvalidos = []
-    // datosInvalidos["nombre"] = inputs["nombre"] !== undefined && '';
-    // datosInvalidos["apellido"] = inputs["apellido"] > 0;
-    // datosInvalidos["edad"] = inputs["edad"] > 1885;
-    // if(objType === "Futbolista"){
-    //     datosInvalidos["equipo"] = inputs["equipo"] > -1;
-    //     datosInvalidos["posicion"] = inputs["posicion"] > 0;
-    // }
-    // else if(objType === "Profesional"){
-    //     datosInvalidos["titulo"] = inputs["titulo"] > 0;
-    //     datosInvalidos["facultad"] = inputs["facultad"] > 0;
-    // }
-    // return !Object.values(datosInvalidos).some(value => value === false);
-    return true;
+    let datosInvalidos = []
+    datosInvalidos["nombre"] = inputs["nombre"] !== undefined && inputs["nombre"] !== '';
+    datosInvalidos["apellido"] = inputs["apellido"] !== undefined && inputs["apellido"] !== '';
+    datosInvalidos["edad"] = inputs["edad"] > 15 && inputs["edad"] < 125;
+    if(objType === "Futbolista"){
+        datosInvalidos["equipo"] = inputs["equipo"] !== undefined && inputs["equipo"] !== '';
+        datosInvalidos["posicion"] = inputs["posicion"] !== undefined && inputs["posicion"] !== '';
+        datosInvalidos["cantidadGoles"] = inputs["cantidadGoles"] > -1;
+    }
+    else if(objType === "Profesional"){
+        datosInvalidos["titulo"] = inputs["titulo"] !== undefined && inputs["titulo"] !== '';
+        datosInvalidos["facultad"] = inputs["facultad"] !== undefined && inputs["facultad"] !== '';
+        datosInvalidos["añoGraduacion"] = inputs["añoGraduacion"] > 1950;
+    }
+    return !Object.values(datosInvalidos).some(value => value === false);
 }
 
 export function crearSelector(opciones) {
