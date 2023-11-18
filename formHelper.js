@@ -73,7 +73,7 @@ export function crearFormBaja(formulario, obj) {
         if (obj_a_eliminar) {
             try {
                 const httpHandler = new HttpHandler();
-            
+
                 crearSpinner();
                 console.log("Antes del fetch");
                 let responsePromise = httpHandler.sendDeleteAsync(obj_a_eliminar);
@@ -84,27 +84,27 @@ export function crearFormBaja(formulario, obj) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                 })
-                .then(response => {
-                    console.log(response);
-                    let LS_Personas = toObjs(localStorage.getObj(entidades));
-                    LS_Personas = LS_Personas.filter((elemento) => elemento.id !== obj.id);
-                
-                    localStorage.removeItem(entidades);
-                    localStorage.setObj(entidades, LS_Personas);
-                
-                    console.log("Quitando spiner...");
-                    quitarSpinner();
-                    const event = new CustomEvent('refrescarTablaPersonas');
-                    document.dispatchEvent(event);
-                })
-                .catch(err => {
-                    console.log(err);
-                    alert(err);
-                    quitarSpinner();
-                    const event = new CustomEvent('refrescarTablaPersonas');
-                    document.dispatchEvent(event);
-                });
-                
+                    .then(response => {
+                        console.log(response);
+                        let LS_Personas = toObjs(localStorage.getObj(entidades));
+                        LS_Personas = LS_Personas.filter((elemento) => elemento.id !== obj.id);
+
+                        localStorage.removeItem(entidades);
+                        localStorage.setObj(entidades, LS_Personas);
+
+                        console.log("Quitando spiner...");
+                        quitarSpinner();
+                        const event = new CustomEvent('refrescarTablaPersonas');
+                        document.dispatchEvent(event);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        alert(err);
+                        quitarSpinner();
+                        const event = new CustomEvent('refrescarTablaPersonas');
+                        document.dispatchEvent(event);
+                    });
+
             }
             catch (error) {
                 alert(JSON.stringify(error));
@@ -308,40 +308,40 @@ export function crearFormAlta(formulario) {
         if (obj) {
             crearSpinner();
             console.log("Antes del fetch");
-
             try {
                 const httpHandler = new HttpHandler();
 
                 let response = httpHandler.sendPutAsync(obj);
                 response.then(response => {
-                    response.json().then(response => {
-                        console.log(response.id);
-                        obj.id = response.id;
-                        let LS_Personas = toObjs(localStorage.getObj(entidades));
-                        LS_Personas.push(obj);
+                    if (response.ok) {
+                        response.json().then(response => {
+                            console.log(response.id);
+                            obj.id = response.id;
+                            let LS_Personas = toObjs(localStorage.getObj(entidades));
+                            LS_Personas.push(obj);
 
-                        localStorage.removeItem(entidades);
-                        localStorage.setObj(entidades, LS_Personas);
+                            localStorage.removeItem(entidades);
+                            localStorage.setObj(entidades, LS_Personas);
 
-                        // let siguienteId = obj.id;
-                        // siguienteId++;
-                        // localStorage.setItem('nextId', siguienteId);
-
-                        console.log("Quitando spiner...");
-                        quitarSpinner();
-                        const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });
-                        document.dispatchEvent(event);
-                    });
+                            console.log("Quitando spiner...");
+                            quitarSpinner();
+                            const event = new CustomEvent('refrescarTablaPersonas');
+                            document.dispatchEvent(event);
+                        });
+                    }
                 })
                     .catch(err => {
-                        console.log(err);
-                    })
+                        if (err instanceof TypeError && err.message === 'Failed to fetch') {
+                            alert('Error en el servidor');
+                            quitarSpinner();
+                            const event = new CustomEvent('refrescarTablaPersonas');
+                            document.dispatchEvent(event);
+                        }
+                    });
             } catch (error) {
                 alert(JSON.stringify(error));
             }
-            quitarSpinner();
         };
-
     });
 
     const botonCancelar = document.createElement('button');
