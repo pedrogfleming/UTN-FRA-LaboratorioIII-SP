@@ -162,34 +162,34 @@ export function crearFormUpdate(formulario, obj) {
             objModificado = new Futbolista(obj.id, inputs["nombre"], inputs["apellido"], inputs["edad"], inputs["equipo"], inputs["posicion"], inputs["cantidadGoles"]);
         }
         if (objModificado) {
-            try {
-                const httpHandler = new HttpHandler();
 
-                crearSpinner();
-                console.log("Antes del fetch");
-                let response = httpHandler.sendPostAsync(objModificado);
-                response.then(response => {
-                    response.text().then(response => {
-                        let LS_Personas = toObjs(localStorage.getObj(entidades));
-                        LS_Personas = LS_Personas.filter((elemento) => elemento.id !== obj.id);
-                        LS_Personas.push(objModificado);
+            const httpHandler = new HttpHandler();
 
-                        localStorage.removeItem(entidades);
-                        localStorage.setObj(entidades, LS_Personas);
-                        // siguienteId++;
-                        // localStorage.setItem('nextId', siguienteId);
-                        console.log("Quitando spiner...");
-                        quitarSpinner();
-                        const event = new CustomEvent('refrescarTablaPersonas', { detail: LS_Personas });
-                        document.dispatchEvent(event);
-                    });
+            crearSpinner();
+            console.log("Antes del fetch");
+
+            httpHandler.sendPost(objModificado)
+                .then(response => response.text())
+                .then(responseText => {
+                    let LS_Personas = toObjs(localStorage.getObj(entidades));
+                    LS_Personas = LS_Personas.filter((elemento) => elemento.id !== obj.id);
+                    LS_Personas.push(objModificado);
+
+                    localStorage.removeItem(entidades);
+                    localStorage.setObj(entidades, LS_Personas);
+
+                    console.log("Quitando spiner...");
+                    quitarSpinner();
+
+                    const event = new CustomEvent('refrescarTablaPersonas');
+                    document.dispatchEvent(event);
                 })
-                    .catch(err => {
-                        console.log(err);
-                    })
-            } catch (error) {
-                alert(JSON.stringify(error));
-            }
+                .catch(err => {
+                    alert(err.message);
+                    quitarSpinner();
+                    const event = new CustomEvent('refrescarTablaPersonas');
+                    document.dispatchEvent(event);
+                });
         }
     });
 
@@ -381,12 +381,12 @@ function validarInputs(inputs, objType) {
     datosInvalidos["nombre"] = inputs["nombre"] !== undefined && inputs["nombre"] !== '';
     datosInvalidos["apellido"] = inputs["apellido"] !== undefined && inputs["apellido"] !== '';
     datosInvalidos["edad"] = inputs["edad"] > 15 && inputs["edad"] < 125;
-    if(objType === "Futbolista"){
+    if (objType === "Futbolista") {
         datosInvalidos["equipo"] = inputs["equipo"] !== undefined && inputs["equipo"] !== '';
         datosInvalidos["posicion"] = inputs["posicion"] !== undefined && inputs["posicion"] !== '';
         datosInvalidos["cantidadGoles"] = inputs["cantidadGoles"] > -1;
     }
-    else if(objType === "Profesional"){
+    else if (objType === "Profesional") {
         datosInvalidos["titulo"] = inputs["titulo"] !== undefined && inputs["titulo"] !== '';
         datosInvalidos["facultad"] = inputs["facultad"] !== undefined && inputs["facultad"] !== '';
         datosInvalidos["añoGraduacion"] = inputs["añoGraduacion"] > 1950;

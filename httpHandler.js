@@ -44,23 +44,35 @@ export class HttpHandler {
         });
     }
 
-    async sendPostAsync(obj){
-        return await fetch(GetUrl(), {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            headers: {
-                'Content-Type': 'application/json'
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            redirect: 'follow', // manual, *follow, error
-            referrerPolicy: 'no-referrer',
-            // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, 
-            //same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-            body: JSON.stringify(obj)
+    sendPost(obj){
+        return new Promise((resolve, reject) =>{
+            fetch(GetUrl(), {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(obj)
+            })
+            .then(response => {
+                if(response.ok){
+                    resolve(response);
+                }else{
+                    response.text().then(errorMessage => {
+                        reject(new Error('Error ' + response.status + ': ' + errorMessage));
+                    });
+                }
+            })
+            .catch(error => {
+                reject(error);
+            });
         });
     }
+    
     async sendDeleteAsync(obj){
         return await fetch(GetUrl(), {
             method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
